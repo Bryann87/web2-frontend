@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout';
 import {
@@ -52,7 +52,7 @@ const RowLoadingOverlay = () => (
   </div>
 );
 
-export default function AsistenciasPage() {
+function AsistenciasContent() {
   const { user, isAdmin, isProfesor } = useAuth();
   const searchParams = useSearchParams();
   const claseIdParam = searchParams.get('clase');
@@ -736,5 +736,26 @@ export default function AsistenciasPage() {
         )}
       </div>
     </DashboardLayout>
+  );
+}
+
+// Componente de fallback para Suspense
+function AsistenciasLoading() {
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex justify-center items-center h-96">
+          <LoadingSpinner size="lg" />
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}
+
+export default function AsistenciasPage() {
+  return (
+    <Suspense fallback={<AsistenciasLoading />}>
+      <AsistenciasContent />
+    </Suspense>
   );
 }
